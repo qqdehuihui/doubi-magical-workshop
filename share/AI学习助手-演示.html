@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 学习助手 · 静态演示</title>
+<style>* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  background: #f4f6fa;
+  color: #1f2933;
+}
+.app {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+.header h1 {
+  margin: 0 0 4px;
+  font-size: 26px;
+}
+.subtitle {
+  margin: 0 0 20px;
+  color: #616e7c;
+  font-size: 14px;
+}
+.card {
+  background: #fff;
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.upload-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+button {
+  border: 1px solid #cbd2d9;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+button.primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+.hint {
+  color: #7b8794;
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+.error {
+  color: #b91c1c;
+  font-size: 14px;
+}
+.doc-info {
+  color: #15803d;
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.tab.active {
+  background: #1f2933;
+  color: #fff;
+  border-color: #1f2933;
+}
+.tab-panel {
+  background: #fff;
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+  padding: 16px;
+}
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+.item {
+  border-bottom: 1px solid #eef1f5;
+  padding: 12px 0;
+}
+.item h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+.item p {
+  margin: 4px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.chips {
+  margin-left: 8px;
+}
+.chip {
+  display: inline-block;
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 12px;
+  margin-right: 4px;
+}
+.quiz-controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.quiz-controls label {
+  font-size: 14px;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.quiz-controls input[type='number'] {
+  width: 64px;
+}
+.type-group {
+  display: inline-flex;
+  gap: 12px;
+}
+.quiz-list {
+  padding-left: 20px;
+}
+.stem {
+  font-weight: 600;
+}
+.option {
+  display: block;
+  font-size: 14px;
+  padding: 2px 0 2px 4px;
+  cursor: pointer;
+}
+.result {
+  font-size: 13px;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.result.ok {
+  background: #ecfdf5;
+  color: #15803d;
+}
+.result.bad {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.quiz-footer {
+  margin-top: 12px;
+}
+.chat-log {
+  min-height: 160px;
+  max-height: 420px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+.msg {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.msg .msg-role {
+  font-size: 12px;
+  color: #7b8794;
+  display: block;
+}
+.msg.user div {
+  background: #dbeafe;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: inline-block;
+}
+.msg.assistant div {
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: inline-block;
+  white-space: pre-wrap;
+}
+.provider-note {
+  font-size: 12px;
+  color: #616e7c;
+  background: #f8fafc;
+  border: 1px dashed #cbd2d9;
+  border-radius: 6px;
+  padding: 4px 10px;
+  margin: 10px 0;
+}
+.provider-note.mock {
+  color: #92400e;
+  background: #fffbeb;
+  border-color: #fcd34d;
+}
+.chat-input {
+  display: flex;
+  gap: 8px;
+}
+.chat-input input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #cbd2d9;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* ===== 多格式与升级功能样式 ===== */
+.progress {
+  position: relative;
+  height: 18px;
+  background: #eef1f5;
+  border-radius: 9px;
+  margin: 10px 0 0;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 9px;
+  transition: width 0.2s;
+}
+.progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #1f2933;
+}
+.course-input,
+.year-input {
+  padding: 7px 10px;
+  border: 1px solid #cbd2d9;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.course-input {
+  min-width: 220px;
+}
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 12px;
+  margin-left: 6px;
+}
+.badge-hi { background: #fee2e2; color: #b91c1c; }
+.badge-mid { background: #fef3c7; color: #92400e; }
+.badge-low { background: #e2e8f0; color: #475569; }
+.badge-diff { background: #dbeafe; color: #1e40af; }
+.badge-cog { background: #ede9fe; color: #5b21b6; }
+.kind { font-size: 12px; color: #7b8794; margin-left: 6px; }
+.legend {
+  margin: 12px 0;
+  font-size: 13px;
+  background: #f8fafc;
+  border: 1px dashed #cbd2d9;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.legend summary { cursor: pointer; color: #475569; }
+.legend ul { margin: 6px 0; padding-left: 18px; }
+.legend-warning { color: #92400e; }
+.layers { margin-top: 8px; }
+.layer {
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  background: #fcfdff;
+}
+.layer h3 {
+  margin: 4px 0 10px;
+  font-size: 15px;
+  color: #111827;
+  border-left: 4px solid #2563eb;
+  padding-left: 8px;
+}
+.chapters { padding-left: 20px; margin: 0; }
+.chapters li { margin-bottom: 8px; font-size: 14px; }
+.chapters p { margin: 2px 0; color: #616e7c; font-size: 13px; }
+.why { margin: 4px 0; padding-left: 18px; font-size: 13px; color: #475569; }
+.confusion { font-size: 13px; color: #7c2d12; background: #fff7ed; border-radius: 6px; padding: 4px 8px; }
+.basis { font-size: 13px; color: #616e7c; }
+.notice-box {
+  margin: 12px 0;
+  padding: 10px 14px;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  color: #92400e;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.stats-table th,
+.stats-table td {
+  border: 1px solid #e3e8ef;
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+.stats-table th { background: #f1f5f9; }
+.chapter-picker { margin: 8px 0; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.chip-toggle {
+  border: 1px solid #cbd2d9;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  background: #fff;
+  cursor: pointer;
+}
+.chip-toggle.on { background: #1f2933; color: #fff; border-color: #1f2933; }
+.link {
+  border: none;
+  background: none;
+  color: #2563eb;
+  text-decoration: underline;
+  padding: 0;
+  font-size: 12px;
+  cursor: pointer;
+}
+.quiz-controls select {
+  padding: 4px 8px;
+  border: 1px solid #cbd2d9;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.fill-input,
+.short-input {
+  display: block;
+  margin: 6px 0;
+  padding: 6px 10px;
+  border: 1px solid #cbd2d9;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 260px;
+}
+.opt-note { font-size: 12px; color: #92400e; margin-left: 8px; }
+.answer-block { margin: 6px 0; }
+.explain { font-size: 13px; color: #475569; background: #f8fafc; border-radius: 6px; padding: 6px 10px; }
+.warn-text { font-size: 12px; color: #b45309; }
+.review-note { font-size: 13px; color: #475569; }
+.excluded { margin: 10px 0; font-size: 13px; }
+.exam-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.exam-bank h3 { margin: 16px 0 4px; font-size: 15px; }
+
+.demo-banner{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;border-radius:10px;
+padding:12px 16px;font-size:13px;line-height:1.7;margin-bottom:16px}
+.tab-panel{display:none}.tab-panel.on{display:block}
+.snapshot-note{font-size:12px;color:#7b8794;margin-top:24px}
+</style>
+</head>
+<body><div class="app">
+<header class="header"><h1>AI 学习助手</h1>
+<p class="subtitle">上传 PDF / PPTX / Word 课件：五层重难点分析、六题型模拟考试、基于原文来源的问答，并可导入历年试卷统计真实考频</p></header>
+<div class="demo-banner"><b>这是静态演示页</b>：由本地部署版在 <b>Mock Provider</b> 下生成的真实输出快照
+（示例课程《力学与能量》，normal.docx，11 个文档块）。
+页面不连后端：不能上传、不能提问；「模拟考试」可作答并本地对照答案，其余结果均为固定快照。
+<b>标注 [MOCK 测试数据] 的内容是测试数据，不代表真实 AI 推理。</b>想在自己电脑跑完整功能，见项目 README。</div>
+<div class="card">
+<div class="upload-row"><button disabled>选择文件</button><input class="course-input" value="端到端验证课" disabled>
+<button class="primary" disabled>上传并解析</button></div>
+<div class="progress"><div class="progress-bar" style="width:100%"></div><span class="progress-text">100%</span></div>
+<p class="doc-info">✅ normal.docx（docx）· 11 个文档块 ·
+286 字符 · 4 个章节 —— 快照时刻的解析结果</p>
+<p class="hint">静态演示：上传按钮不可用；真实部署支持 PDF/PPTX/DOCX 上传、旧 .ppt/.doc 会提示另存为新格式。</p>
+</div>
+<nav class="tabs">
+<button class="tab active" data-p="p1">重难点分析</button>
+<button class="tab" data-p="p2">模拟考试</button>
+<button class="tab" data-p="p3">课件问答</button>
+<button class="tab" data-p="p4">历年资料库</button>
+</nav><section class="tab-panel on" id="p1">
+<details class="legend"><summary>四个指标的含义（不可混同）</summary><ul><li>课件强调度：内容在课件中的重复/突出程度</li><li>知识点重要性：定义、原理、公式等知识属性</li><li>推测考查价值：基于强调度的复习优先级（非统计结论）</li><li>历史考试频率：仅来自已导入历年试卷/题库的真实统计，未导入则无法得出</li></ul>
+<p class="legend-warning">四个指标含义不同，不可混同使用</p></details>
+<div class="layers">
+<section class="layer"><h3>① 课程核心框架</h3><p class="stem">力学与能量课件</p><ol class="chapters"><li><b>力学与能量课件</b><p>第一章 牛顿运动定律</p><span class='chip'>力学与能量课件</span></li><li><b>第一章 牛顿运动定律</b><p>第一章 牛顿运动定律</p><span class='chip'>第一章 牛顿运动定律</span></li><li><b>第二章 能量守恒</b><p>第二章 能量守恒</p><span class='chip'>第二章 能量守恒</span></li><li><b>第三章 功与功率</b><p>第三章 功与功率</p><span class='chip'>第三章 功与功率</span></li></ol><ul class="why"><li>力学与能量课件 → 第一章 牛顿运动定律：内容依次展开（Mock 依据原文顺序）</li><li>第一章 牛顿运动定律 → 第二章 能量守恒：内容依次展开（Mock 依据原文顺序）</li><li>第二章 能量守恒 → 第三章 功与功率：内容依次展开（Mock 依据原文顺序）</li></ul></section><section class="layer"><h3>② 核心知识点</h3><div class="item"><p class="stem">第一章 牛顿运动定律<span class="badge badge-hi">重要性高</span><span class="badge badge-mid">课件强调中</span><span class="kind">principle</span></p><p>[MOCK 测试数据] 原文依据（章节 力学与能量课件/第一章 牛顿运动定律）：“第一章 牛顿运动定律”</p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律</span></span></div><div class="item"><p class="stem">牛顿第一定律：物体在不受外力作用时保持静止或匀速直线运动状态。<span class="badge badge-hi">重要性高</span><span class="badge badge-mid">课件强调中</span><span class="kind">principle</span></p><p>[MOCK 测试数据] 原文依据（章节 力学与能量课件/第一章 牛顿运动定律/第1段）：“牛顿第一定律：物体在不受外力作用时保持静止或匀速直线运动状态。”</p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律/第1段</span></span></div><div class="item"><p class="stem">牛顿第二定律说明加速度与合外力的关系，关键公式 F = m * a，其中 m 为<span class="badge badge-hi">重要性高</span><span class="badge badge-hi">课件强调高</span><span class="kind">formula</span></p><p>[MOCK 测试数据] 原文依据（章节 力学与能量课件/第一章 牛顿运动定律/第2段）：“牛顿第二定律说明加速度与合外力的关系，关键公式 F = m * a，其中 m 为质量。”</p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律/第2段</span></span></div><div class="item"><p class="stem">第二章 能量守恒<span class="badge badge-mid">重要性中</span><span class="badge badge-low">课件强调低</span><span class="kind">key_fact</span></p><p>[MOCK 测试数据] 原文依据（章节 力学与能量课件/第二章 能量守恒）：“第二章 能量守恒”</p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒</span></span></div><div class="item"><p class="stem">机械能守恒定律：在只有保守力做功时，系统总机械能 E = K + U 保持不变。<span class="badge badge-hi">重要性高</span><span class="badge badge-hi">课件强调高</span><span class="kind">formula</span></p><p>[MOCK 测试数据] 原文依据（章节 力学与能量课件/第二章 能量守恒/第3段）：“机械能守恒定律：在只有保守力做功时，系统总机械能 E = K + U 保持不变。”</p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒/第3段</span></span></div><div class="item"><p class="stem">动能公式 K = 1/2 m v^2，重力势能公式 U = m g h。<span class="badge badge-hi">重要性高</span><span class="badge badge-hi">课件强调高</span><span class="kind">formula</span></p><p>[MOCK 测试数据] 原文依据（章节 力学与能量课件/第二章 能量守恒/第4段）：“动能公式 K = 1/2 m v^2，重力势能公式 U = m g h。”</p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒/第4段</span></span></div><div class="item"><p class="stem">物理量 | 单位<span class="badge badge-mid">重要性中</span><span class="badge badge-low">课件强调低</span><span class="kind">key_fact</span></p><p>[MOCK 测试数据] 原文依据（第二章 能量守恒 / 表格1）：“物理量 | 单位”</p><span class="chips"><span class="chip">第二章 能量守恒 / 表格1</span></span></div><div class="item"><p class="stem">力 F | 牛顿（N）<span class="badge badge-mid">重要性中</span><span class="badge badge-low">课件强调低</span><span class="kind">key_fact</span></p><p>[MOCK 测试数据] 原文依据（第二章 能量守恒 / 表格1）：“力 F | 牛顿（N）”</p><span class="chips"><span class="chip">第二章 能量守恒 / 表格1</span></span></div></section><section class="layer"><h3>③ 重难点解析</h3><div class="item"><p class="stem">第一章 牛顿运动定律</p><p>[MOCK 测试数据] 依据（章节 力学与能量课件/第一章 牛顿运动定律）：“第一章 牛顿运动定律”</p><ul class="why"><li>容易混淆/常见理解错误</li></ul><p class="confusion">易混对比 · 第二章 能量守恒：用另一知识点中的「第二章」替换了「第一章」，属于概念混淆</p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律</span></span></div><div class="item"><p class="stem">牛顿第一定律：物体在不受外力作用时保持静止或匀速直线运动状态。</p><p>[MOCK 测试数据] 依据（章节 力学与能量课件/第一章 牛顿运动定律/第1段）：“牛顿第一定律：物体在不受外力作用时保持静止或匀速直线运动状态。”</p><ul class="why"><li>容易混淆/常见理解错误</li></ul><p class="confusion">易混对比 · 机械能守恒定律：在只有保守力做功时，系统总机械能 E = K + U 保持不变。：用另一知识点中的「机械能守」替换了「牛顿第一」，属于概念混淆</p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律/第1段</span></span></div><div class="item"><p class="stem">牛顿第二定律说明加速度与合外力的关系，关键公式 F = m * a，其中 m 为</p><p>[MOCK 测试数据] 依据（章节 力学与能量课件/第一章 牛顿运动定律/第2段）：“牛顿第二定律说明加速度与合外力的关系，关键公式 F = m * a，其中 m 为质量。”</p><ul class="why"><li>容易混淆/常见理解错误</li><li>公式与计算方法的适用条件</li></ul><p class="confusion">易混对比 · 动能公式 K = 1/2 m v^2，重力势能公式 U = m g h。：用另一知识点中的「动能公式」替换了「牛顿第二」，属于概念混淆</p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律/第2段</span></span></div><div class="item"><p class="stem">第二章 能量守恒</p><p>[MOCK 测试数据] 依据（章节 力学与能量课件/第二章 能量守恒）：“第二章 能量守恒”</p><ul class="why"><li>容易混淆/常见理解错误</li></ul><p class="confusion">易混对比 · 物理量 | 单位：用另一知识点中的「物理量」替换了「第二章」，属于概念混淆</p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒</span></span></div><div class="item"><p class="stem">机械能守恒定律：在只有保守力做功时，系统总机械能 E = K + U 保持不变。</p><p>[MOCK 测试数据] 依据（章节 力学与能量课件/第二章 能量守恒/第3段）：“机械能守恒定律：在只有保守力做功时，系统总机械能 E = K + U 保持不变。”</p><ul class="why"><li>容易混淆/常见理解错误</li><li>公式与计算方法的适用条件</li></ul><p class="confusion">易混对比 · 力 F | 牛顿（N）：用另一知识点中的「牛顿」替换了「机械能守」，属于概念混淆</p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒/第3段</span></span></div><div class="item"><p class="stem">动能公式 K = 1/2 m v^2，重力势能公式 U = m g h。</p><p>[MOCK 测试数据] 依据（章节 力学与能量课件/第二章 能量守恒/第4段）：“动能公式 K = 1/2 m v^2，重力势能公式 U = m g h。”</p><ul class="why"><li>公式与计算方法的适用条件</li></ul><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒/第4段</span></span></div></section><section class="layer"><h3>④ 可能考查内容（基于课件强调度的推测，非统计结论）</h3><div class="item"><p class="stem">第一章 牛顿运动定律<span class="badge badge-mid">推测考查价值中</span></p><p class="basis">依据：课件一次性提及</p><p class="hint">仅基于课件强调程度的推测，不代表历年真实考频</p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律</span></span></div><div class="item"><p class="stem">牛顿第一定律：物体在不受外力作用时保持静止或匀速直线运动状态。<span class="badge badge-mid">推测考查价值中</span></p><p class="basis">依据：课件一次性提及</p><p class="hint">仅基于课件强调程度的推测，不代表历年真实考频</p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律/第1段</span></span></div><div class="item"><p class="stem">牛顿第二定律说明加速度与合外力的关系，关键公式 F = m * a，其中 m 为<span class="badge badge-hi">推测考查价值高</span></p><p class="basis">依据：课件中给出明确定义/公式（强调度高）；同一内容在课件中多处出现</p><p class="hint">仅基于课件强调程度的推测，不代表历年真实考频</p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律/第2段</span></span></div><div class="item"><p class="stem">第二章 能量守恒<span class="badge badge-low">推测考查价值低</span></p><p class="basis">依据：课件一次性提及</p><p class="hint">仅基于课件强调程度的推测，不代表历年真实考频</p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒</span></span></div><div class="item"><p class="stem">机械能守恒定律：在只有保守力做功时，系统总机械能 E = K + U 保持不变。<span class="badge badge-hi">推测考查价值高</span></p><p class="basis">依据：课件中给出明确定义/公式（强调度高）；同一内容在课件中多处出现</p><p class="hint">仅基于课件强调程度的推测，不代表历年真实考频</p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒/第3段</span></span></div><div class="item"><p class="stem">动能公式 K = 1/2 m v^2，重力势能公式 U = m g h。<span class="badge badge-hi">推测考查价值高</span></p><p class="basis">依据：课件中给出明确定义/公式（强调度高）；同一内容在课件中多处出现</p><p class="hint">仅基于课件强调程度的推测，不代表历年真实考频</p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒/第4段</span></span></div><div class="item"><p class="stem">物理量 | 单位<span class="badge badge-low">推测考查价值低</span></p><p class="basis">依据：课件一次性提及</p><p class="hint">仅基于课件强调程度的推测，不代表历年真实考频</p><span class="chips"><span class="chip">第二章 能量守恒 / 表格1</span></span></div><div class="item"><p class="stem">力 F | 牛顿（N）<span class="badge badge-low">推测考查价值低</span></p><p class="basis">依据：课件一次性提及</p><p class="hint">仅基于课件强调程度的推测，不代表历年真实考频</p><span class="chips"><span class="chip">第二章 能量守恒 / 表格1</span></span></div></section><section class="layer"><h3>⑤ 历年高频考点（真实统计）</h3><p class="hint">基于已导入的 3 份历年资料、14 道题统计（来源：examdb_statistics）</p><table class="stats-table"><tr><th>考点</th><th>出现次数</th><th>年份跨度</th><th>题型分布</th><th>合计分值</th></tr><tr><td>energy</td><td>3</td><td>2021-2021</td><td>未标注×3</td><td>未知</td></tr><tr><td>牛顿第二定律</td><td>3</td><td>2022-2023</td><td>单选×2 简答×1</td><td>20</td></tr><tr><td>动能</td><td>2</td><td>2022-2023</td><td>填空×1 单选×1</td><td>8</td></tr><tr><td>机械能守恒定律</td><td>3</td><td>2022-2023</td><td>填空×1 简答×1 单选×1</td><td>18</td></tr><tr><td>kinetic</td><td>1</td><td>2021-2021</td><td>未标注×1</td><td>未知</td></tr><tr><td>重力势能</td><td>1</td><td>2022-2022</td><td>填空×1</td><td>3</td></tr><tr><td>功率</td><td>1</td><td>2023-2023</td><td>填空×1</td><td>3</td></tr></table><p class="hint">章节覆盖：力学与能量课件（0） · 第一章 牛顿运动定律（1） · 第二章 能量守恒（2） · 第三章 功与功率（1）</p></section></div></section><section class="tab-panel" id="p2">
+<div class="quiz-controls"><label>题数 <input type="number" value="6" disabled></label>
+<label>难度 <select disabled><option>不限</option></select></label>
+<label>认知层次 <select disabled><option>不限</option></select></label>
+<button class="primary" disabled>题目为快照，不可重新生成</button></div>
+<p class="review-note">质量审核：检查 6 题 · 通过 6 ·
+排除 0 · 重生成 0 题（静态快照）</p>
+<ol class="quiz-list"><li class="item" data-i="0"><p class="stem">1. [单选] 根据章节 力学与能量课件/第一章 牛顿运动定律，下列哪一项表述与原文一致？（关于「第一章」）<span class="badge badge-diff">基础</span><span class="badge badge-cog">理解层</span></p><p class="hint">知识点：第一章</p><label class="option"><input type="radio" name="q0" value="A">A. 第一章 牛顿运动定律<span class='opt-note reveal' hidden>✔ 正确项</span></label><label class="option"><input type="radio" name="q0" value="B">B. 牛顿第一牛顿第一：物体在不受外力作用时保持静止或匀速直线运动状态。<span class='opt-note reveal' hidden>✘ 用另一知识点中的「牛顿第一」替换了「定律」，属于概念混淆（对照原文 章节 力学与能量课件/第一章 牛顿运动定律）</span></label><label class="option"><input type="radio" name="q0" value="C">C. 第一章定律说明加速度与合外力的关系，关键公式 F = m * a，其中 m 为质量。<span class='opt-note reveal' hidden>✘ 用另一知识点中的「第一章」替换了「牛顿第二」，属于概念混淆（对照原文 章节 力学与能量课件/第一章 牛顿运动定律）</span></label><label class="option"><input type="radio" name="q0" value="D">D. 第二章 第二章<span class='opt-note reveal' hidden>✘ 用另一知识点中的「第二章」替换了「能量守恒」，属于概念混淆（对照原文 章节 力学与能量课件/第一章 牛顿运动定律）</span></label><p class="answer-block reveal" hidden><span class="explain">解析：[MOCK 测试数据] 正确项摘自原文（章节 力学与能量课件/第一章 牛顿运动定律）：“第一章 牛顿运动定律”；错误项均为对真实原文句的可解释变形。</span></p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律</span></span></li><li class="item" data-i="1"><p class="stem">2. [多选] 关于「牛顿第一」，以下章节 力学与能量课件/第一章 牛顿运动定律/第1段原文支持的说法有哪些？（多选）<span class="badge badge-diff">中等</span><span class="badge badge-cog">分析层</span></p><p class="hint">知识点：牛顿第一</p><label class="option"><input type="checkbox" name="q1" value="A">A. 牛顿第一定律：物体在不受外力作用时保持静止或匀速直线运动状态。<span class='opt-note reveal' hidden>✔ 正确项</span></label><label class="option"><input type="checkbox" name="q1" value="B">B. 第二章 能量守恒<span class='opt-note reveal' hidden>✔ 正确项</span></label><label class="option"><input type="checkbox" name="q1" value="C">C. 牛顿第一恒定律：在只有保守力做功时，系统总机械能 E = K + U 保持不变。<span class='opt-note reveal' hidden>✘ 用另一知识点中的「牛顿第一」替换了「机械能守」，属于概念混淆（对照原文 章节 力学与能量课件/第一章 牛顿运动定律/第1段）</span></label><label class="option"><input type="checkbox" name="q1" value="D">D. 动能公式 K = 2/2 m v^2，重力势能公式 U = m g h。<span class='opt-note reveal' hidden>✘ 篡改了原文中的数值参数（对照原文 章节 力学与能量课件/第一章 牛顿运动定律/第1段）</span></label><p class="answer-block reveal" hidden><span class="explain">解析：[MOCK 测试数据] 选项 A、B 摘自原文；其余为对真实原文句的可解释变形（章节 力学与能量课件/第一章 牛顿运动定律/第1段）。</span></p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律/第1段</span></span></li><li class="item" data-i="2"><p class="stem">3. [判断] 关于「牛顿第二」，有人提出：「牛顿第二定律说明加速度与合外力的关系，关键公式 F = m * a，其中 m 为质量。」。依据章节 力学与能量课件/第一章 牛顿运动定律/第2段，这一判断成立吗？<span class="badge badge-diff">较难</span><span class="badge badge-cog">理解层</span></p><p class="hint">知识点：牛顿第二</p><label class="option"><input type="radio" name="q2" value="A">A. 正确<span class='opt-note reveal' hidden>✔ 正确项</span></label><label class="option"><input type="radio" name="q2" value="B">B. 错误<span class='opt-note reveal' hidden>✘ 与原文矛盾，原文为：“牛顿第二定律说明加速度与合外力的关系，关键公式 F = m * a，其中 m 为质量。”</span></label><p class="answer-block reveal" hidden><span class="explain">解析：[MOCK 测试数据] 该表述与原文一致。原文（章节 力学与能量课件/第一章 牛顿运动定律/第2段）：“牛顿第二定律说明加速度与合外力的关系，关键公式 F = m * a，其中 m 为质量。”</span></p><span class="chips"><span class="chip">章节 力学与能量课件/第一章 牛顿运动定律/第2段</span></span></li><li class="item" data-i="3"><p class="stem">4. [填空] 依据课件（章节 力学与能量课件/第二章 能量守恒）按原文填空：第二章 ____<span class="badge badge-diff">挑战</span><span class="badge badge-cog">记忆层</span></p><p class="hint">知识点：第二章</p><p class="answer-block reveal" hidden><span class="result">可接受答案：能量守恒</span></p><p class="answer-block reveal" hidden><span class="explain">解析：[MOCK 测试数据] 原文（章节 力学与能量课件/第二章 能量守恒）该处为「能量守恒」。</span></p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒</span></span></li><li class="item" data-i="4"><p class="stem">5. [简答] 什么是章节 力学与能量课件/第二章 能量守恒/第3段中提到的「机械能守」？请用自己的话概括其要点。<span class="badge badge-diff">基础</span><span class="badge badge-cog">应用层</span></p><p class="hint">知识点：机械能守</p><p class="answer-block reveal" hidden><span class="explain">参考答案：[MOCK 测试数据] 参考答案（源自原文 章节 力学与能量课件/第二章 能量守恒/第3段）：机械能守恒定律：在只有保守力做功时，系统总机械能 E = K + U 保持不变。</span></p><ul class="why reveal"><li>答出原文核心表述得基础分</li><li>能用原文术语，不要求逐字一致</li></ul><p class="answer-block reveal" hidden><span class="explain">解析：[MOCK 测试数据] 本题依据（章节 力学与能量课件/第二章 能量守恒/第3段）原文构造，Mock 模式不代表真实评分能力。</span></p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒/第3段</span></span></li><li class="item" data-i="5"><p class="stem">6. [综合] 课件（章节 力学与能量课件/第二章 能量守恒/第4段）给出了「动能公式」。请综合分析：它解决什么问题、需要什么条件、结论如何得出。<span class="badge badge-diff">中等</span><span class="badge badge-cog">评价层</span></p><p class="hint">知识点：动能公式</p><p class="answer-block reveal" hidden><span class="explain">参考答案：[MOCK 测试数据] 参考答案（源自原文 章节 力学与能量课件/第二章 能量守恒/第4段）：动能公式 K = 1/2 m v^2，重力势能公式 U = m g h。</span></p><ul class="why reveal"><li>答出原文核心表述得基础分</li><li>能用原文术语，不要求逐字一致</li></ul><p class="answer-block reveal" hidden><span class="explain">解析：[MOCK 测试数据] 本题依据（章节 力学与能量课件/第二章 能量守恒/第4段）原文构造，Mock 模式不代表真实评分能力。</span></p><span class="chips"><span class="chip">章节 力学与能量课件/第二章 能量守恒/第4段</span></span></li></ol><div class="quiz-footer"><button id="reveal">提交并显示答案解析</button></div><p class="snapshot-note">provider: mock/mock-v2（mock=True），本结果由 Mock Provider 基于课件原文片段生成，属测试数据，不代表真实 AI 推理能力。</p></section><section class="tab-panel" id="p3">
+<div class="chat-log">
+<div class="msg user"><span class="msg-role">我</span><div>机械能守恒的条件是什么？</div></div>
+<div class="msg assistant"><span class="msg-role">助手</span><div>[MOCK 测试数据] 依据课件原文（章节 力学与能量课件、章节 力学与能量课件/第二章 能量守恒、章节 力学与能量课件/第二章 能量守恒/第3段、章节 力学与能量课件/第三章 功与功率/第5段）：第二章 能量守恒；机械能守恒定律：在只有保守力做功时，系统总机械能 E = K + U 保持不变。；功的定义 W = F * d * cos(theta)，表示力在位移方向上的能量传递。。（Mock 摘录，非真实 AI 推理）</div>
+<span class="chips"><span class="chip">章节 力学与能量课件</span><span class="chip">章节 力学与能量课件/第二章 能量守恒</span><span class="chip">章节 力学与能量课件/第二章 能量守恒/第3段</span><span class="chip">章节 力学与能量课件/第三章 功与功率/第5段</span></span></div>
+<p class="hint">检索证据 4 段；回答附原文定位标签（第N页 / 第N张幻灯片 / 章节路径 / 表格N），不同格式不混用编号。</p>
+</div>
+<div class="chat-input"><input placeholder="静态演示不能提问——真实部署中这里走关键词检索 + 证据不足短路（不会编造答案）" disabled>
+<button class="primary" disabled>发送</button></div></section><section class="tab-panel" id="p4">
+<p class="hint">课程「端到端验证课」：已导入 3 份历年资料，统计完全来自真实导入数据；
+年份/题型/分值无法识别时记为「未知」，不做猜测。</p>
+<table class="stats-table"><tr><th>资料文件</th><th>类型</th><th>年份</th><th>题数</th></tr><tr><td>exam_2021.pdf</td><td>试卷</td><td>2021</td><td>4</td></tr><tr><td>exam_2022.docx</td><td>试卷</td><td>2022</td><td>5</td></tr><tr><td>exam_2023.docx</td><td>试卷</td><td>2023</td><td>5</td></tr></table><p class="hint">按年份：2021 年 4 题、2022 年 5 题、2023 年 5 题；按题型：未标注×4，单选×4，填空×4，简答×2</p></section><p class="snapshot-note">快照生成于 2026-11-20 22:55，
+课程「端到端验证课」，Provider：mock/mock-v2（测试数据）。本页由 backend/scripts/make_share_demo.py 生成，可重复运行更新。</p>
+</div>
+<script>
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(x => x.classList.remove('on'));
+  t.classList.add('active');
+  document.getElementById(t.dataset.p).classList.add('on');
+}));
+const rv = document.getElementById('reveal');
+if (rv) rv.addEventListener('click', () => {
+  const on = rv.textContent.startsWith('收起');
+  document.querySelectorAll('.reveal').forEach(e => e.hidden = on);
+  rv.textContent = on ? '提交并显示答案解析' : '收起答案';
+});
+</script>
+</body></html>

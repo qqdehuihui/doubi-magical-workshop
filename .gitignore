@@ -1,0 +1,33 @@
+# deps & build
+node_modules/
+dist/
+.venv/
+__pycache__/
+*.pyc
+
+# secrets & runtime data
+.env
+data/
+
+# tooling
+.vscode/
+.idea/
+*.log
+.DS_Store
+
+# Additional security and project exclusions
+.env.*
+!.env.example
+!**/.env.example
+ai-study-assistant-src.zip
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+*.sqlite
+*.sqlite3
+*.db
